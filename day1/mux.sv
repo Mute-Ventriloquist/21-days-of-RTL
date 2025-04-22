@@ -1,5 +1,3 @@
-// A simple mux
-
 `timescale 1ns/1ps
 
 module mux (
@@ -9,9 +7,7 @@ module mux (
   output  wire [7:0]    y_o
 );
 
-  // Write your logic here...
-  assign y_o = sel_i ? b_i : a_i;
+assign y_o = sel_i ? b_i : a_i; // if sel_i is 1 then a_i else b_i
 
-  
 endmodule
 
