@@ -1,5 +1,5 @@
 // --------------------------------------------------------
-// YAPP - Scoreboard - https://quicksilicon.in/course/testbench-design/module/yapp
+// YAPP - Scoreboard
 // --------------------------------------------------------
 
 class yapp_scoreboard;
@@ -9,6 +9,7 @@ class yapp_scoreboard;
   
   // creating an array of pending IDs
 	bit [11:0] pend_id_arr = 12'b0;
+  bit [11:0] used_id_arr = 12'b0;
 
   function new (mailbox #(yapp_req_transaction) mon2sb_req, mailbox #(yapp_resp_transaction) mon2sb_resp);
     $display("[INFO] @ %0t: Creating the yapp_scoreboard", $time);
@@ -59,6 +60,9 @@ class yapp_scoreboard;
             continue;
           end
         end
+        
+        used_id_arr[req_tr.yapp_req_id] = 1;
+        
         // print the pending array
         print_pend_ids(pend_id_arr);
       end
@@ -107,7 +111,13 @@ class yapp_scoreboard;
     $display("[INFO] @ %0t: YAPP Scoreboard: End of test", $time);
     // Add any end of the test checks here if needed
       
-      // Check 1: Check if all pending reqs are serviced. Use the pending_id_array
+    // Check 1: Check is all ids are serviced
+    if (!&used_id_arr) begin
+      $display("[ERROR] @ %0t: YAPP Scoreboard: All IDs are not tested in the simulation review the stimulus!", $time);
+      bug_tracker($time, 0);
+    end
+    	
+      
   endfunction
   
   function void print_pend_ids(bit [11:0] id_vector);
